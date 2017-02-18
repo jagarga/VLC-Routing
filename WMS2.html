@@ -1,0 +1,136 @@
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+
+<style type="text/css">
+
+	body {
+		background-color: #FFCC66;
+	}
+
+
+</style>
+
+
+<h4>CARGADOR DE CAPAS WMS</h4>  <hr/> </br>
+
+<title>Cargar WMS</title> Dirección WMS a cargar &nbsp <input name='wmsacargar' type='text' id='wmsacargar' size='44'/> </br> </br>
+
+
+Capas a cargar &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<input name='cargalayers' type='text' id='cargalayers' size='44'/> </br> </br>
+
+
+Transparencia &nbsp&nbsp&nbsp <select id="transparencia">
+
+		  <option value="true">Transparente</option>
+          <option value="false">Opaco</option>
+		  
+	</select>   &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+
+
+<button data-dojo-type="dijit/form/Button" onClick="cargawms()" style="background-color: #FF9900">Añadir WMS</button>  <hr/> 
+
+<button data-dojo-type="dijit/form/Button" onClick='listadowms()' >Listado de servicios WMS</button> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+
+<button data-dojo-type="dijit/form/Button" onClick='ejemplo()' >Ayuda</button>
+
+   <script src="http://openlayers.org/api/2.12-rc5/OpenLayers.js"></script>
+   <script src="deprecated.js" type="text/javascript"></script>
+   <script src="http://svn.osgeo.org/metacrs/proj4js/trunk/lib/proj4js-compressed.js"></script>
+
+<script LANGUAGE="JavaScript">
+
+
+			// Variable de acceso al fichero proxy que nos permite acceder a otras webs (getfeature, getcapabilitie, wms ...)
+			OpenLayers.ProxyHost = "/../cgi-bin/proxy.cgi?url=";
+			
+// http://www.01.cartociudad.es/wms/CARTOCIUDAD/CARTOCIUDAD
+
+        //Con esta funcionhacemos un getcapabilities sobre el WMS introducido y mostramos en un textbox las capas que tiene contiene ese wms
+		function getcapabilities() {
+		    
+		  var wmsacargar = document.getElementById('wmsacargar').value;	  //recogemos la url wms introducida por el usuario
+		
+		$("#datos").load('wms.php');
+		
+		
+		
+          /*var wmscapabilities = new OpenLayers.Format.WMSCapabilities();
+          OpenLayers.Request.GET({
+          url:wmsacargar + "?request=GetCapabilities",
+          success: function(e){
+          var response = wmscapabilities.read(e.responseText);
+		  alert (response);
+          var capability = response.capability;
+          var layerObj = new Array();
+          for (var i=0, len=capability.layers.length; i<len; i+=1) { 
+          layerObj.push(capability.layers[i].name);
+          //var layerObj = capability.layers[i];  
+          }
+		  document.getElementById('layers').value=layerObj;
+
+          }
+          });	  */
+		  
+		  //Algunos WMS como por ejemplo los del ICV requieren poner en su url "&service=WMS", por ello se hace este if
+		  var leng= document.getElementById('layers').value
+		  if (leng.length<2) {
+		  
+		  
+		            OpenLayers.Request.GET({
+          url:wmsacargar + "?request=GetCapabilities&service=WMS",
+          success: function(e){
+          var response = wmscapabilities.read(e.responseText);
+          var capability = response.capability;
+          var layerObj = new Array();
+          for (var i=0, len=capability.layers.length; i<len; i+=1) { 
+          layerObj.push(capability.layers[i].name);
+          //var layerObj = capability.layers[i];  
+          }
+		  
+		  //&service=WMS
+		  document.getElementById('layers').value=layerObj;
+
+          }
+          });
+		  
+		  
+		  }
+
+}
+	
+// Con esta funcion recogemos la URL introducida por el usuario y las capas disponibles en dicho WMS para devolverlas a la ventana principal y proceder a su carga
+
+
+        function cargawms() {
+		  
+		  var sharedObject = new Object();
+		  sharedObject.url= document.getElementById('wmsacargar').value;
+		  sharedObject.layers= document.getElementById('cargalayers').value;
+		  sharedObject.transparencia= document.getElementById('transparencia').value;
+		  window.returnValue = sharedObject;
+		  
+		  window.close ();   //cerramos la ventana al enviar los datos a la ventana principal
+
+        }		
+		
+		
+		function listadowms() {   //con esta función cargamos la pagina de servicios wms de la ide (infraestructura de datos espaciales)
+		
+		window.showModalDialog("http://www.idee.es/web/guest/directorio-de-servicios","","resizable: yes; center: off");
+		
+		
+		}
+		
+		function ejemplo() {
+		
+		window.showModalDialog("imagenes/ayuda2.png","","dialogwidth: 890; dialogheight: 355;  resizable: yes; center: off");
+
+		
+		}
+
+
+</script>
+
+
+</html>
