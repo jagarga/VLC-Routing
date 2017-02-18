@@ -1,0 +1,2016 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+  
+        <style type="text/css">
+	
+	table.tm {
+        width: 100%;
+        height: 100%;
+		position:absolute;
+        top:0px;
+		left:0px;
+	
+    }
+    table.tm td.left, table.tm td.right {
+        border: 5px solid #FF8000;
+		background-color: #FFCC66;
+        margin: 0;
+        padding: 0;
+    }
+
+    table.tm td.left {
+        width: 75%;
+    }
+    table.tm td.right {
+        width: 25%;
+        vertical-align: top;
+        padding: 5px;
+    }	
+	
+.tabs { /* es el rectángulo contenedor */
+margin: 0 auto;
+min-height: 30%;
+position: relative;
+width: 100%;
+}
+.tab { /* cada una de las pestañas */
+float: left;
+}
+.tab label { /* la parte superior con el título de la pestaña */
+background-color: #D6A844;
+border-radius: 5% 5% 0 0;
+box-shadow: -3% 3% 2% #D6A844 inset;
+color: #000000;
+cursor: pointer;
+left: 0;
+margin-right: 1px;
+padding: 5px 10px;
+position: relative;
+text-shadow: 0px 0px #000;
+}
+/* el control input sólo lo necesitamos para que las pestañas permanezcan abiertas así que lo ocultamos */
+.tab [type=radio] { display: none; }
+
+/* el contenido de las pestañas */
+.content {
+background-color: #D89910;
+bottom: 0;
+left: 0;
+overflow: hidden;
+padding: 5%;
+position: absolute;
+right: 0;
+top: 9%;
+}
+
+/* controlamos la pestaña activa */
+[type="radio"]:checked ~ label {
+background-color: #D89910;
+box-shadow: 0 3px 2px #D6A844 inset;
+color: #FFF;
+z-index: 2;
+}
+[type=radio]:checked ~ label ~ .content { z-index: 1; }
+[type=radio]:checked ~ label ~ .content > * {
+opacity: 1;
+-moz-transform: translateX(0);
+-webkit-transform: translateX(0);
+-o-transform: translateX(0);
+-ms-transform: translateX(0);
+}
+
+
+/* Styles used by the default GetFeatureInfo output, added to make IE happy */
+table.featureInfo, table.featureInfo td, table.featureInfo th {
+border: 1px solid #ddd;
+border-collapse: collapse;
+margin: 0;
+padding: 0;
+font-size: 90%;
+padding: .2em .1em;
+}
+table.featureInfo th {
+padding: .2em .2em;
+font-weight: bold;
+background: #eee;
+}
+table.featureInfo td {
+background: #fff;
+}
+table.featureInfo tr.odd td {
+background: #eee;
+}
+table.featureInfo caption {
+text-align: left;
+font-size: 100%;
+font-weight: bold;
+padding: .2em .2em;
+} 
+
+
+        .olControlPanel div { 
+          display:block;
+		  position: relative;
+		  left: 670px;
+          width:  22px;
+          height: 22px;
+          margin: 5px;
+          background-color:white;
+		  float: left;
+        }
+  
+        .olControlPanel .olControlPanZoomItemActive { 
+          width:  22px;  
+          height: 22px;
+          background-image: url("theme/default/img/mano_on.png");
+        }
+        .olControlPanel .olControlPanZoomItemInactive { 
+          width:  22px;  
+          height: 22px;
+          background-image: url("theme/default/img/mano_off.png");
+		}
+  
+        .olControlPanel .olControlposicion { 
+          width:  22px;  
+          height: 22px;
+          background-image: url("theme/default/img/draw_line_on.png");
+        }  
+        .olControlPanel .olControlDrawFeatureItemActive { 
+          width:  22px;  
+          height: 22px;
+          background-image: url("theme/default/img/draw_line_on.png");
+        }
+        .olControlPanel .olControlDrawFeatureItemInactive { 
+          width:  22px;  
+          height: 22px;
+          background-image: url("theme/default/img/draw_line_off.png");
+        }
+        .olControlPanel .olControlZoomBoxItemInactive { 
+          width:  22px;  
+          height: 22px;
+          background-color: orange;
+          background-image: url("theme/default/img/drag-rectangle-off.png");
+        }
+        .olControlPanel .olControlZoomBoxItemActive { 
+          width:  22px;  
+          height: 22px;
+          background-color: blue;
+          background-image: url("theme/default/img/drag-rectangle-on.png");
+        }
+        .olControlPanel .olControlZoomToMaxExtentItemInactive { 
+          width:  22px;  
+          height: 22px;
+          background-image: url("theme/default/img/zoom-world-mini.png");
+        }
+		
+		.ControlZoomvlcItemInactive { 
+          width:  22px;  
+          height: 22px;
+          background-image: url("theme/default/img/valencia.png");
+        }
+		
+		.ControlPosicionItemInactive {
+		  width:  22px;  
+          height: 22px;
+          background-image: url("theme/default/img/localizacion_peque.png");
+		}
+		  
+		.ControlWMSItemInactive {
+		  width:  22px;  
+          height: 22px;
+		  z-index: 99999;
+          background-image: url("theme/default/img/wms.png");
+		}
+		
+		.ControleltiempoItemInactive {
+		  width:  22px;  
+          height: 22px;
+          background-image: url("theme/default/img/tiempo.png");
+		}
+		
+		.olControlZoom{display:none};
+		
+	
+        </style>
+
+		<table class="tm">
+    <tr>
+        <td class="left">
+		
+			<IMG id= "wait" img border="2" src="imagenes/espera.gif" WIDTH="40" HEIGHT="40" style="z-index:999999;position:absolute; top: 45%; left: 35%; visibility: hidden;" >
+		
+            <div id="map" style="width: 100%; height: 100%;"></div>
+        </td>
+        <td class="right" style="font-size:12px;">
+		
+		<IMG SRC="imagenes/Valenciarouting5.png" WIDTH=100% HEIGHT=7% BORDER=0>
+
+			<br/>
+			<hr/>
+			
+			<div class="tabs">
+			
+			
+   <div class="tab" >
+       <input type="radio" id="tab-1" name="tab-group-1" checked>
+       <label for="tab-1">Por dirección</label>
+       <div class="content"> 
+	   
+	   <h4>Introduce las direcciones de origen y destino:</h4>
+    <p>
+	
+	<table>
+	<tr>
+	
+	    <td nowrap>
+	        <form action="#" onsubmit="codeAddress(); return false;">
+	            <label style="font-size:12px;"> Origen &nbsp </label>
+				&nbsp
+	            <input type="text" id="q-adress" name="q" value="Avenida del Cid" size="15%" />
+	            <input type="submit" name="find" value="Buscar" style="font-size:12px;" />
+	        </form>
+		</td>
+    </tr>
+	
+	<tr>
+        <td nowrap>		
+			<form action="#" onsubmit="codeAddress2(); return false;">
+	            <label style="font-size:12px;"> Destino </label>
+				&nbsp
+	            <input type="text" id="q-adress2" name="q" value="Avenida Giorgeta" size="15%" />
+	            <input type="submit" name="find" value="Buscar" style="font-size:12px;" />
+	        </form>
+		</td>
+	</tr>	
+    </table>		
+    </p> 
+	   
+	   </div>
+   </div>
+   <div class="tab">
+       <input type="radio" id="tab-2" name="tab-group-1">
+       <label for="tab-2">Por código postal</label>
+       <div class="content"> 
+	   
+	   <h4>Introduce los códigos postales:</h4>
+    <p>
+    <label style="font-size:12px;">CP Origen</label>
+    <input name="cpinicio" type="text" id="cpinicio" size="5" style="font-size:12px;" value="46017"/>
+	
+	&nbsp
+	
+	
+	<label style="font-size:12px;">CP Destino</label>
+    <input name="cpfinal" type="text" id="cpfinal" size="5" style="font-size:12px;" value="46021"/>
+    </p>
+                <button data-dojo-type="dijit/form/Button" onClick="eligecps()" >Establecer códigos postales</button>
+             
+	</div>
+   </div>
+   
+   
+    <div class="tab">
+       <input type="radio" id="tab-3" name="tab-group-1">
+       <label for="tab-3">Por coordenadas</label>
+       <div class="content"> 
+	   
+	   
+<h4>&nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp Origen &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp Destino</h4>
+
+<table>
+
+	           <tr>	
+<p>
+               <td nowrap>
+  <label style="font-size:12px;">Longitud</label>
+               </td>
+			   
+               <td nowrap>
+  <input name="xinicio" type="text" id="xinicio" size="3" value="-0.39"/>
+               </td>
+			   
+			   <td nowrap>
+  <label style="font-size:12px;">Longitud</label>
+               </td>
+  
+               <td nowrap>
+  <input name="xfinal" type="text" id="xfinal" size="3" value="-0.36"/>
+               </td>
+
+</p>
+
+              </td>
+              </tr>
+
+<p>  
+
+			   
+			   <td nowrap>  
+  <label style="font-size:12px;">Latitud</label>
+               </td>
+  
+               <td nowrap>
+  <input name="yinicio" type="text" id="yinicio" size="3" value="39.45"/>
+               </td>
+
+			   <td nowrap>
+  <label style="font-size:12px;">Latitud</label>
+               </td>
+			   
+			   <td nowrap>
+  <input name="yfinal" type="text" id="yfinal" size="3" value="39.48"/>
+               </td>
+</p>
+</table>
+
+
+            <button data-dojo-type="dijit/form/Button" onClick="eligepuntos()">Establecer puntos de la ruta</button>
+
+	   </div>
+   </div>
+</div>
+
+            <table>
+
+		 <hr/>  
+		 
+	<h4>PUNTOS DE INTERES TURISTICO:</h4>   
+	
+	<IMG id="turismo" SRC="imagenes/turismo2.png" WIDTH="18" HEIGHT="18" style="visibility:visible">	
+	Origen:
+        <select id="puntosinteresorigen" onChange="muestrapuntos(this.value, 2)">
+
+		  <option value="1">La Catedral</option>
+          <option value="2">La Lonja</option>
+          <option value="3">Las Torres de Serranos</option>
+          <option value="4">Santa Catalina</option>
+          <option value="5">La Basilica de la Virgen</option>
+          <option value="6">Palacio del Marqués de Dos Aguas</option>
+          <option value="7">La Plaza de Toros</option>
+          <option value="8">El Miguelete</option>
+          <option value="9">Almoina</option>
+          <option value="10">Ciudad de las Artes y las Ciencias</option>
+          <option value="11">Palacio de la Exposición</option>
+          <option value="12">Estación del Norte</option>
+          <option value="13">Las Torres de Quart</option>
+          <option value="14">Mercado de Colón</option>
+          <option value="15">Mercado Central</option>
+          <option value="16">Convento de Santo Domingo</option>
+          <option value="17">Iglesia de los Santos Juanes</option>
+          <option value="18">Monasterio San Miguel de los Reyes</option>
+          <option value="19">Palau de la Generalitat</option>
+          <option value="20">Palau de les Arts</option>
+          <option value="21">Claustro del Convento del Carmen</option>
+          <option value="22">Museo San Pío V</option>
+          <option value="23">Plaza Redonda</option>
+          <option value="24">Jardín Botánico</option>
+          <option value="25">Viveros</option>
+          <option value="26">El Panterre</option>
+          <option value="27">Edificio Veles e Vents</option>
+          <option value="28">Correos</option>
+          <option value="29">Boramar</option>
+          <option value="30">Iglesia de San Agustín</option>
+          <option value="31">Viejo cauce del Turia</option>
+          <option value="32">Iglesia y Palacio del Temple</option>
+          <option value="33">Plaza de Ayuntamiento</option>
+          <option value="34">Palacio de Justicia</option>
+          <option value="35">Oceanogràfic</option>
+          <option value="36">Hemisfèric</option>
+          <option value="37">Ágora</option>		
+		
+        </select>
+		
+		<br/>
+		<br/>
+
+	<IMG id="turismo" SRC="imagenes/turismo2.png" WIDTH="18" HEIGHT="18" style="visibility:visible">
+    Destino:
+		<select id="puntosinteresdestino" onChange="muestrapuntos2(this.value)">
+		
+		  <option value="2">La Lonja</option>
+		  <option value="1">La Catedral</option>
+          <option value="3">Las Torres de Serranos</option>
+          <option value="4">Santa Catalina</option>
+          <option value="5">La Basilica de la Virgen</option>
+          <option value="6">Palacio del Marqués de Dos Aguas</option>
+          <option value="7">La Plaza de Toros</option>
+          <option value="8">El Miguelete</option>
+          <option value="9">Almoina</option>
+          <option value="10">Ciudad de las Artes y las Ciencias</option>
+          <option value="11">Palacio de la Exposición</option>
+          <option value="12">Estación del Norte</option>
+          <option value="13">Las Torres de Quart</option>
+          <option value="14">Mercado de Colón</option>
+          <option value="15">Mercado Central</option>
+          <option value="16">Convento de Santo Domingo</option>
+          <option value="17">Iglesia de los Santos Juanes</option>
+          <option value="18">Monasterio San Miguel de los Reyes</option>
+          <option value="19">Palau de la Generalitat</option>
+          <option value="20">Palau de les Arts</option>
+          <option value="21">Claustro del Convento del Carmen</option>
+          <option value="22">Museo San Pío V</option>
+          <option value="23">Plaza Redonda</option>
+          <option value="24">Jardín Botánico</option>
+          <option value="25">Viveros</option>
+          <option value="26">El Panterre</option>
+          <option value="27">Edificio Veles e Vents</option>
+          <option value="28">Correos</option>
+          <option value="29">Boramar</option>
+          <option value="30">Iglesia de San Agustín</option>
+          <option value="31">Viejo cauce del Turia</option>
+          <option value="32">Iglesia y Palacio del Temple</option>
+          <option value="33">Plaza de Ayuntamiento</option>
+          <option value="34">Palacio de Justicia</option>
+          <option value="35">Oceanogràfic</option>
+          <option value="36">Hemisfèric</option>
+          <option value="37">Ágora</option>	
+
+        </select>
+
+		 
+		 <hr/>
+		 
+		 
+
+    <h4>POR INTERACCION CON EL MAPA:</h4>			
+
+            <button id="singleStatus" onclick="toggle('single')" style="background-color: #FF9900">Desactivado</button>
+<br/>
+            <input type="radio" name="control" value="start" id="startToggle" />
+            <label for="startToggle">Elegir punto de salida</label>
+<br/>
+            <input type="radio" name="control" value="stop" id="stopToggle" />
+            <label for="stopToggle">Elegir punto de llegada</label>
+<br/>
+
+
+			<br/>
+			<hr/>
+			<br/>
+			
+		<select id="metodo" onChange="seleccionicono(this.value)">
+		  <option value="coche">En coche</option>
+          <option value="pie">A pie</option>
+		  <option value="bici">En bicicleta</option>
+
+        </select>
+		
+		&nbsp
+
+	    <IMG id="imagencoche" SRC="theme/default/img/coche.png" style="visibility: visible">
+		<IMG id="imagenapie" SRC="theme/default/img/apie.png" style="visibility: hidden">
+		<IMG id="imagenbici" SRC="theme/default/img/bici.png" style="visibility: hidden">
+		&nbsp
+		
+        <button onClick="compute(route)" style="background-color: #FF9900; width:120px; height:25" >Calcular Ruta</button>
+			<br/>
+			
+			<div id="distancia" style="visibility: hidden">
+			La longitud total de la ruta es de <span id="longitud" 	> </span> Km
+			
+			</div>
+			
+		<hr/>	
+						
+			
+			<button data-dojo-type="dijit/form/Button" onClick="acercade()" style="position: relative; left: 65%; width:100px; height:31">Acerca de...</button>
+				
+			
+            </table>
+
+
+        </td>
+    </tr>
+	
+	
+
+</table>
+
+
+   <script src="http://dev.openlayers.org/releases/OpenLayers-2.12/lib/OpenLayers.js"></script>
+   <script src="deprecated.js" type="text/javascript"></script>
+   <script src="http://svn.osgeo.org/metacrs/proj4js/trunk/lib/proj4js-compressed.js"></script>
+   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDO9M7TNbCEVjKEHaYpPYns-4J5bTCrPyY&sensor=false"></script>
+   <script src='http://54.75.3.196/api/v3/js/geocloud.js'></script>
+    
+
+
+        <script type="text/javascript">
+
+            var SinglePoint = OpenLayers.Class.create();
+            SinglePoint.prototype = OpenLayers.Class.inherit(OpenLayers.Handler.Point, {
+                createFeature: function(evt) {
+                    this.control.layer.removeFeatures(this.control.layer.features);
+                    OpenLayers.Handler.Point.prototype.createFeature.apply(this, arguments);
+                }
+            });
+
+            var start_style = OpenLayers.Util.applyDefaults({
+                externalGraphic: "imagenes/start.png",
+                graphicWidth: 17,
+                graphicHeight: 17,
+                graphicYOffset: -26,
+                graphicOpacity: 1
+            }, OpenLayers.Feature.Vector.style['default']);
+
+            var stop_style = OpenLayers.Util.applyDefaults({
+                externalGraphic: "imagenes/stop.png",
+                graphicWidth: 17,
+                graphicHeight: 17,
+                graphicYOffset: -26,
+                graphicOpacity: 1
+            }, OpenLayers.Feature.Vector.style['default']);
+			
+			 var result_coche_style = OpenLayers.Util.applyDefaults({
+                 strokeWidth: 3,
+                 strokeColor: "#2B0FCB",
+                 fillOpacity: 0,
+				 title: 'Ruta'
+             }, OpenLayers.Feature.Vector.style['default']);
+
+             var result_pie_style = OpenLayers.Util.applyDefaults({
+                 strokeWidth: 3,
+                 strokeColor: "#ff0000",
+                 fillOpacity: 0,
+				 title: 'Ruta'
+             }, OpenLayers.Feature.Vector.style['default']);
+			 
+			 var result_bici_style = OpenLayers.Util.applyDefaults({
+                 strokeWidth: 3,
+                 strokeColor: "#F516C4",
+                 fillOpacity: 0,
+				 title: 'Ruta'
+             }, OpenLayers.Feature.Vector.style['default']);
+			 
+	        var markerStyle = {
+	            externalGraphic: 'imagenes/google.png',
+	            pointRadius: 17
+	        };
+			
+			var turismo_style = OpenLayers.Util.applyDefaults({
+                externalGraphic: "imagenes/turismo2.png",
+                graphicWidth: 17,
+                graphicHeight: 17,
+                graphicYOffset: -26,
+                graphicOpacity: 1
+            }, OpenLayers.Feature.Vector.style['default']);
+	
+
+            // global variables
+            var map, parser, start, stop, downtown, result, controls, geocoder;
+			var route = null;
+			// Variable de acceso al fichero proxy que nos permite acceder a otras webs (getfeature, getcapabilitie, wms ...)
+			//OpenLayers.ProxyHost = "/../cgi-bin/proxy.cgi?url=";
+
+		    // Variable geolocate que usaremos para conocer la posicion del usuario
+            var geolocate = new OpenLayers.Control.Geolocate({
+                eventListeners: {
+                   "locationupdated": locateMarker,
+                   "locationfailed": function() {
+                   console.log('Location detection failed');
+                   }
+                  }
+               });
+			
+			//definimos el maximo tamaño de los popups debido a un fallo de la version 2.12. Los popups se reprensetaran del siguiente tamaño.
+			OpenLayers.Popup.FramedCloud.prototype.maxSize = new OpenLayers.Size(180, 230); 
+			
+			
+			
+			//variables para el wms de geoserver
+			 OpenLayers.IMAGE_RELOAD_ATTEMPTS = 5;
+             // make OL compute scale according to WMS spec
+              OpenLayers.DOTS_PER_INCH = 25.4 / 0.28; 
+			  var pureCoverage = false;
+			
+
+		//EVENTO CLICK PARA CAPTURAR LA COORDENADA DEL PIXEL CLICKADO Y PASARSELA A LOS PUNTOS DEL CALCULO DE LA RUTA
+
+            OpenLayers.Control.Click = OpenLayers.Class(OpenLayers.Control, {                
+                defaultHandlerOptions: {
+                    'single': true,
+                    'double': false,
+                    'pixelTolerance': 0,
+                    'stopSingle': false,
+                    'stopDouble': false
+                },
+
+                initialize: function(options) {
+                    this.handlerOptions = OpenLayers.Util.extend(
+                        {}, this.defaultHandlerOptions
+                    );
+                    OpenLayers.Control.prototype.initialize.apply(
+                        this, arguments
+                    ); 
+                    this.handler = new OpenLayers.Handler.Click(
+                        this, {
+                            'click': this.onClick
+                        }, this.handlerOptions
+                    );
+                }, 
+
+      onClick: function(e) {
+        
+		
+		var puntoclick = (map.getLonLatFromPixel(e.xy));
+                    /*alert("You clicked near " + puntoclick.lat + " N, " +
+                                              + puntoclick.lon + " E");*/
+		
+		var cont = document.getElementById("startToggle");
+		var cont2 = document.getElementById("stopToggle");
+		
+
+		
+		//hacemos if else con la propiedad checked de los radiobutton para distingir entre punto de salida o de llegada
+		if( cont.checked){
+			
+				
+		    //si ya se ha dibujado previamente algun feature, se borran.
+		        if (start) {
+                 start.removeFeatures(start.features);
+		        }								  
+											  
+			// Crear una feature punto
+                var puntostart = new OpenLayers.Geometry.Point(puntoclick.lon,puntoclick.lat);
+                var featurestart= new OpenLayers.Feature.Vector(puntostart); 
+		
+	        // Añadir las features a la capa vectorial
+			 
+			   start.features[0]=featurestart;
+			   
+			//dibuja los puntos en el mapa
+                new OpenLayers.Control.DrawFeature(start, SinglePoint);
+								
+				//map.baseLayer.redraw();
+				map.setCenter(new OpenLayers.LonLat(map.getCenter()), 5);  //Se cambia rapidamente el zoom para que se actualizen los iconos de salida y llegada
+	            map.setCenter(puntoclick, 16);
+				
+				
+                  } else if ( cont2.checked) {
+				    
+				     		
+		            //lo mismo pero con el punto de parada
+				    //si ya se ha dibujado previamente algun feature, se borran.
+		            if (stop) {
+                    stop.removeFeatures(stop.features);
+		            }
+				
+		            var puntostop = new OpenLayers.Geometry.Point(puntoclick.lon,puntoclick.lat);
+                    var featurestop= new OpenLayers.Feature.Vector(puntostop); 
+		  
+			        // Añadir las features a la capa vectorial
+			        stop.features[0]=featurestop;
+        
+			        //dibuja los puntos en el mapa
+                    new OpenLayers.Control.DrawFeature(stop, SinglePoint);
+					
+					//map.baseLayer.redraw();
+					map.setCenter(new OpenLayers.LonLat(map.getCenter()), 5);  //Se cambia rapidamente el zoom para que se actualizen los iconos de salida y llegada
+	                map.setCenter(puntoclick, 16);
+					
+			
+				    }
+				}
+            });
+
+
+
+			
+
+
+ function Lon2Merc(lon) {
+
+        return 20037508.34 * lon / 180;
+
+}
+
+
+
+function Lat2Merc(lat) {
+
+        var PI = 3.14159265358979323846;
+
+        lat = Math.log(Math.tan( (90 + lat) * PI / 360)) / (PI / 180);
+
+        return 20037508.34 * lat / 180;
+
+}
+
+           OpenLayers.IMAGE_RELOAD_ATTEMPTS = 3;
+
+           OpenLayers.Util.onImageLoadErrorColor = "transparent";
+
+
+
+
+            function init() {
+			
+			 format = 'image/png';
+             if(pureCoverage) {
+document.getElementById('filterType').disabled = true;
+document.getElementById('filter').disabled = true;
+document.getElementById('antialiasSelector').disabled = true;
+document.getElementById('updateFilterButton').disabled = true;
+document.getElementById('resetFilterButton').disabled = true;
+document.getElementById('jpeg').selected = true;
+} 
+			
+                var zoom = 18;
+
+                var options = {
+				
+                    projection: new OpenLayers.Projection("EPSG:900913"),
+
+                    displayProjection: new OpenLayers.Projection("EPSG:4326"),
+
+                    units: "degrees",
+
+                    numZoomLevels: 22,
+
+                    maxResolution: 156543.0339,
+
+                    maxExtent: new OpenLayers.Bounds(-20037508, -20037508,
+
+                                                     20037508, 20037508.34)
+
+                };
+
+                map = new OpenLayers.Map('map', options);
+				
+                map.addControl(new OpenLayers.Control.LayerSwitcher());
+                map.addControl(new OpenLayers.Control.MousePosition());
+				//map.addControl(new OpenLayers.Control.NavToolbar({position:new OpenLayers.Pixel(50,5)})); 
+				
+				map.addControl(geolocate); //control para localizar la posicion del usuario de la pagina
+
+				
+                controls = {
+                    "single": new OpenLayers.Control.Click({
+                        handlerOptions: {
+                            "single": true
+                        }
+                    }),
+
+                    "double": new OpenLayers.Control.Click({
+                        handlerOptions: {
+                            "single": true
+                        }
+                    }),					
+					
+
+                };
+				
+				
+				                // controls
+                /*controls = {
+                  start: new OpenLayers.Control.DrawFeature(start, SinglePoint),
+                  stop: new OpenLayers.Control.DrawFeature(stop, SinglePoint)
+                }
+                for (var key in controls) {
+                    map.addControl(controls[key]);
+                } */
+				
+				var control;
+                for(var key in controls) {
+                    control = controls[key];
+                    // only to route output here
+                    control.key = key;
+                    map.addControl(control);
+                }
+
+		//http://bicimap.es/wordpress/?p=1353
+		//Panel de botones
+		    vlayer = new OpenLayers.Layer.Vector( "Editable" );
+            map.addLayer(vlayer);
+
+            var panel = new OpenLayers.Control.Panel({defaultControl: new OpenLayers.Control.PanZoom({title:"Herramienta mano para moverse por el mapa"})});
+            panel.addControls([
+			    new OpenLayers.Control.PanZoom({title:"Herramienta mano para moverse por el mapa"}),
+                new OpenLayers.Control.ZoomBox({title:"Selecciona el area sobre la que hacer zoom"}),
+                new OpenLayers.Control.DrawFeature(vlayer, OpenLayers.Handler.Path,
+                    {title:'Dibuja una capa'}),
+                new OpenLayers.Control.ZoomToMaxExtent({title:"Zoom a la máxima extensión"}),
+				
+            ]);
+            
+            nav = new OpenLayers.Control.NavigationHistory();
+            // parent control must be added to the map
+            map.addControl(nav);
+            panel.addControls([nav.next, nav.previous]);
+			
+			// Creamos dos botones asignando clase CSS y método 'trigger'
+			btn = new OpenLayers.Control.Button({ displayClass:"ControlZoomvlc", trigger: zoomvlc, title:"Zoom a la provincia de Valencia"  });
+			btn1 = new OpenLayers.Control.Button({ displayClass:"ControlPosicion", trigger: geolocationClick, title:"Mostrar posicion del usuario"  });
+			btn2 = new OpenLayers.Control.Button({ displayClass:"ControlWMS", trigger: wmswindow, title:"Cargar capa wms"  });
+			btn3 = new OpenLayers.Control.Button({ displayClass:"Controleltiempo", trigger: eltiempowindow, title:"Mostrar el tiempo" });
+			
+			// Añadimos los botones al panel
+			panel.addControls([btn, btn1, btn2, btn3]);
+            
+            map.addControl(panel);		
+	
+
+
+   //var wms= new OpenLayers.Layer.WMS.Untiled( "strassen",
+
+   //     "http://localhost/cgi-bin/mapserv?map=/your_path/routing.map",
+
+   //        {layers: 'streets',transparent:true, format: 'png'});
+
+
+
+   //var wms2= new OpenLayers.Layer.WMS.Untiled( "dead_ends",
+
+   //     "http://localhost/cgi-bin/mapserv?map=/your_path/routing.map",
+
+   //        {layers: 'dead_ends',transparent:true, format: 'png'});
+
+
+
+ //wms.isBaseLayer= false;
+
+ //   wms2.isBaseLayer= false;
+ 
+ 
+
+                        // create OSM layer
+
+                var mapnik = new OpenLayers.Layer.TMS(
+
+                    "OpenStreetMap",
+
+                      "http://a.tile.openstreetmap.org/",
+
+                    {
+
+                        type: 'png', getURL: osm_getTileURL,
+
+                        displayOutsideMaxExtent: true,
+
+                        attribution: '<a href="http://www.openstreetmap.org/">OpenStreetMap</a>'
+
+                    }
+
+                );
+
+                start = new OpenLayers.Layer.Vector("Punto de salida", {style: start_style});
+                stop = new OpenLayers.Layer.Vector("Punto de llegada", {style: stop_style});
+
+                //result = new OpenLayers.Layer.Vector("Ruta", {style: result_style});
+
+                map.addLayers([mapnik, start, stop]);
+				
+				
+				
+			//Capa de OSM en blanco y negro	
+				
+            var OSMtoner = new OpenLayers.Layer.XYZ(
+              "OpenStreetMap (Toner)",
+              "http://tile.stamen.com/toner/${z}/${x}/${y}.png",
+              {
+                sphericalMercator: true,
+                wrapDateLine: true,
+                // TODO: min zoom level 2
+                numZoomLevels: 20,
+              }
+            );
+            map.addLayer(OSMtoner);
+				
+				
+				
+				
+				
+				
+				
+				//WMS Mapcentia
+			   // Capa de carri bici proveniente de nuestro servidor en mapcentia
+			   
+               carrilbici = new OpenLayers.Layer.WMS(
+               "Carril bici", "http://eu1.mapcentia.com/wms/jagarga/public/",
+               {
+               LAYERS: 'public.bc',
+               STYLES: '',
+               format: format,
+               tiled: true,
+               transparent: true,
+               tilesOrigin : map.maxExtent.left + ',' + map.maxExtent.bottom
+               },
+               {
+               buffer: 0,
+               displayOutsideMaxExtent: true,
+               isBaseLayer: false,
+			   visibility: false,
+               }
+               );
+
+               map.addLayer(carrilbici);
+				
+				
+				// Capa de carreteras proveniente de nuestro servidor en mapcentia
+			   
+               carreteras = new OpenLayers.Layer.WMS(
+               "Carreteras", "http://eu1.mapcentia.com/wms/jagarga/public/",
+               {
+               LAYERS: 'public.cr',
+               STYLES: '',
+               format: format,
+               tiled: true,
+               transparent: true,
+               tilesOrigin : map.maxExtent.left + ',' + map.maxExtent.bottom
+               },
+               {
+               buffer: 0,
+               displayOutsideMaxExtent: true,
+               isBaseLayer: false,
+			   visibility: false,
+               }
+               );
+
+               map.addLayer(carreteras);			
+				
+				
+				
+				 
+ 				//INSERCION DE LAS CAPAS DE GOOGLE
+				
+				   var physical = new OpenLayers.Layer.Google(
+ 				     "Google Physical",
+   				   {type: google.maps.MapTypeId.TERRAIN}
+ 				   );
+ 				   var streets = new OpenLayers.Layer.Google(
+ 				     "Google Streets"
+ 				   );
+ 				   var hybrid = new OpenLayers.Layer.Google(
+  				    "Google Hybrid",
+  				    {type: google.maps.MapTypeId.HYBRID}
+  				   );
+ 				   var satellite = new OpenLayers.Layer.Google(
+  				    "Google Satellite",
+  				    {type: google.maps.MapTypeId.SATELLITE}
+ 				   );
+ 
+ 				   map.addLayers([physical, streets, hybrid, satellite]);
+ 
+ 
+				
+				
+				
+
+				
+				
+				//CARGAMOS NUESTRA CAPA PUNTOS TURISTICOS DEL SERVIDOR MAPCENTIA
+				
+			var puntos_turisticos = new geocloud.geoJsonStore({
+				db: "jagarga",
+				name: "Puntos turísticos",
+				sql: "SELECT gid, the_geom AS wkt, identifica from puntos_turi2",
+			});
+			
+        	puntos = puntos_turisticos.layer;
+			puntos_turisticos.load();
+			
+			puntos.style = turismo_style;
+			puntos.title= "Puntos turisticos";
+
+			map.addLayer(puntos);
+
+			puntos_turisticos.onLoad = function(){
+			
+				//map.zoomToExtent(route.getDataExtent());
+			}  
+
+			   
+			
+			//Control para activar el evento click sobre la capa de puntos turisticos
+			var selectFeature = new OpenLayers.Control.SelectFeature(puntos,  {onSelect: onFeatureSelect, onUnselect: onFeatureUnselect});
+            map.addControl(selectFeature);
+            selectFeature.activate();
+			
+			function onFeatureSelect(feature) {
+                 selectedFeature = feature;
+				 var punto = feature.data.identifica;
+				 var turis = 1;  //variable para en la funcion muestrapuntos saber hay que asignarle los puntos de ruta o no
+				 //alert (feature.data.identifica);
+				 muestrapuntos(punto, turis);
+				 //alert(feature.geometry.getBounds().getCenterLonLat().transform(map.getProjectionObject(), new OpenLayers.Projection("EPSG:4326")));
+			}
+			
+			function onFeatureUnselect(feature) {
+
+             }
+			
+			
+			
+			//CARGAMOS CODIGOS POSTALES
+			
+			var cp = new geocloud.geoJsonStore({
+				db: "jagarga",
+				sql: "select x,y,the_geom AS wkt from codigos_postales where codigo='46017' or codigo='46021'",
+			});
+			
+              //var codigo_postal = cp.layer;	
+			  //codigo_postal.style = start_style;			  
+			  //map.addLayer(codigo_postal);
+			  
+			cp.load();
+			  			
+			cp.onLoad = function(){
+			
+			var cpx = cp.layer.features[0].attributes.x;
+			var cpy = cp.layer.features[0].attributes.y;
+			var cp2x = cp.layer.features[1].attributes.x;
+			var cp2y = cp.layer.features[1].attributes.y;
+
+			}
+			
+
+		  
+				
+				/*
+               //WMS Geoserver
+			   // Capa de puntos turisticos proveniente de nuestro servidor WMS en geoserver
+			   
+               tiled = new OpenLayers.Layer.WMS(
+               "Puntos turísticos", "http://localhost:8080/geoserver/PFC/wms",
+               {
+               LAYERS: 'PFC:puntosturisticos',
+               STYLES: '',
+               format: format,
+               tiled: true,
+               transparent: true,
+               tilesOrigin : map.maxExtent.left + ',' + map.maxExtent.bottom
+               },
+               {
+               buffer: 0,
+               displayOutsideMaxExtent: true,
+               isBaseLayer: false,
+               yx : {'EPSG:4326' : true}
+               }
+               );
+
+map.addLayer(tiled); 
+
+    */
+
+
+
+                // Zoom a la provincia de valencia
+				if(!map.getCenter()){
+
+				map.setCenter(new OpenLayers.LonLat(-42000, 4789000), 13);	
+		}
+		
+		
+		
+		/*
+		
+		//GETFEATURE
+		 // Vamos a extrar la informacion de la capa WMS y a represnetarla mediante GetFeatureInfo
+		 //map.layers[0]=tiled;  //elegimos la capa para el getfeatured
+
+
+       var info = new OpenLayers.Control.WMSGetFeatureInfo({
+            url: "http://localhost:8080/geoserver/PFC/wms",
+            title: 'Puntos turísticos',
+            queryVisible: true,
+            eventListeners: {
+                getfeatureinfo: function(event) {
+				        //Este while borra los popups anteriores si existen
+				        while( map.popups.length ) {
+                               map.removePopup(map.popups[0]);
+                               }
+							   if (event.text.length > 700){   //con este if evitamos que nos salga un popup en los puntos que no hay datos
+                    map.addPopup(new OpenLayers.Popup.FramedCloud(
+                        "chicken", 
+                        map.getLonLatFromPixel(event.xy),
+                        null,
+                        event.text,
+                        null,
+                        true 
+                    ))};
+                }
+            }
+        });
+        map.addControl(info);
+        info.activate();
+
+*/		
+		
+/*
+				// Codigo para mover la marca de google maps y estabelecer otra direccion
+	           /* var dragCtl = new OpenLayers.Control.DragFeature(vectors); 
+	            dragCtl.onComplete = function(feature, position) {
+	                var ll = map.getLonLatFromPixel(position);	                
+					var coords = ll.transform(map.getProjectionObject(), new OpenLayers.Projection("EPSG:4326"));
+	                alert('New coordinates: ' + coords.lon + ' ' + coords.lat);
+	            }
+	            map.addControl(dragCtl);
+	            dragCtl.activate();   */
+	           
+	
+	            // Center map
+	          /*  var centerLonLat = new OpenLayers.LonLat(10.5, 51.6).transform(new OpenLayers.Projection("EPSG:4326"), map.getProjectionObject());
+	            map.setCenter (centerLonLat, 5);   */
+				
+				
+            }
+
+			//funcion para capturar el click
+			function toggle(key) {
+                var control = controls[key];
+                if(control.active) {
+                    control.deactivate();
+                } else {
+                    control.activate();
+                }
+                var status = document.getElementById(key + "Status");
+                status.innerHTML = control.active ? "Activado" : "Desactivado";
+
+            }
+			
+			
+			
+			//FUNCIONES PARA EL CALCULO DE RUTAS ONLINE EN MAPCENTIA.COM
+			
+		//Funcion principal
+        function compute(route) {
+			
+			document.getElementById('wait').style.visibility = 'visible';  //mostramos el icono de espera mientras se procesa
+			
+			// Si la variable route existe es porque ya hay una capa de rutas cargada y la borramos
+			if (route != null) {
+
+			map.removeLayer(route);
+			
+			}
+			
+					
+			//Miramos si el calculo de la ruta es a pie o en bicicleta, dependiendo de esto usaremos una tabla, distancia buffer y bbox, o un stilo distinto
+		  
+		    var metodo = document.getElementById('metodo').value;
+		    var tabla = "cr";
+		    var distancia = "300";
+			var bbox = "500";
+			var estilo = result_pie_style;
+			var funcion;
+			var varextra;
+		
+		    if ( metodo == "bici" ) {
+		
+		    tabla = "bc" ;
+		    distancia = "10000";
+			bbox = "1000000";	
+			estilo = result_bici_style;
+			funcion = "dijkstra_sp_delta";
+			varextra = "";
+		
+		    }
+			
+			if ( metodo == "coche" ) {
+		
+		    tabla = "valencia_medium" ;
+		    distancia = "1000";
+			bbox = "500";
+			estilo = result_coche_style;
+			funcion = "dijkstra_sp_delta_directed";
+			varextra = ", true, true";
+			
+		    }
+			
+			if ( metodo == "pie" ) {
+		
+		    tabla = "valencia_medium" ;
+		    distancia = "1000";
+			bbox = "500";
+			estilo = result_pie_style;
+			funcion = "dijkstra_sp_delta";
+			varextra = "";
+		
+		    }
+			
+			    var startPointx = start.features[0].geometry.x;
+				var startPointy = start.features[0].geometry.y;
+                var stopPointx = stop.features[0].geometry.x;
+				var stopPointy = stop.features[0].geometry.y;
+				
+				
+				//Puntos para el BBOX del punto de salida
+				var xmin= startPointx-bbox;
+				var ymin= startPointy-bbox;
+				var xmax= startPointx+bbox;
+				var ymax= startPointy+bbox;
+				
+
+		
+			//SOURCE POINT
+
+			var inicio = new geocloud.geoJsonStore({
+				db: "jagarga",
+				sql: "SELECT gid, source,ST_distance (the_geom, ST_GeometryFromText('POINT(" + startPointx + " " + startPointy + ")', 900913)) AS dist FROM " + tabla + " WHERE the_geom && st_setsrid('BOX3D(" + xmin + " " + ymin + " , " + xmax + " " + ymax + ")'::box3d, 900913) ORDER BY dist LIMIT 1"
+			});	
+			
+			//cloudMap.addGeoJsonStore(store);
+			inicio.load();
+			
+			   inicio.onLoad = function(){
+			
+			       var nodoinicial = inicio.layer.features[0].attributes.source;
+				   doSomeThing(nodoinicial, stopPointx, stopPointy, tabla, distancia, bbox, estilo, funcion, varextra)
+				   
+			   
+			   }
+		   
+		}
+			
+		   function doSomeThing(nodoinicial, stopPointx, stopPointy, tabla, distancia, bbox, estilo, funcion, varextra){
+		
+		
+			//Puntos para el BBOX del punto de llegada
+			var xmin2= stopPointx-bbox;
+			var ymin2= stopPointy-bbox;
+			var xmax2= stopPointx+bbox;
+			var ymax2= stopPointy+bbox;
+			
+			
+			//TARGET POINT
+
+	
+			var final = new geocloud.geoJsonStore({
+				db: "jagarga",
+				sql: "SELECT gid, target,ST_distance (the_geom, ST_GeometryFromText('POINT(" + stopPointx + " " + stopPointy + ")', 900913)) AS dist FROM " + tabla + " WHERE the_geom && st_setsrid('BOX3D(" + xmin2 + " " + ymin2 + " , " + xmax2 + " " + ymax2 + ")'::box3d, 900913) ORDER BY dist LIMIT 1"
+			});	
+			
+
+			final.load();
+			
+			final.onLoad = function(){
+			
+			    var nodofinal = final.layer.features[0].attributes.target;
+
+			    doSomeThing2(nodoinicial, nodofinal, tabla, distancia, estilo, funcion, varextra)
+				
+						
+			}
+	  	
+		}
+			
+
+		  function doSomeThing2(nodoinicial, nodofinal, tabla, distancia, estilo, funcion, varextra){
+		  
+		  
+	
+		   	var store = new geocloud.geoJsonStore({
+				db: "jagarga",
+				name: "Ruta",
+				sql: "SELECT rt.gid, rt.the_geom AS wkt, st_length(rt.the_geom) AS length FROM " + tabla + ",(SELECT gid, the_geom FROM " + funcion + "('" + tabla + "'," + nodoinicial + "," + nodofinal + ", " + distancia + varextra + ")) as rt WHERE " + tabla + ".gid=rt.gid"
+			});
+			
+			//cloudMap.addGeoJsonStore(store);
+			
+			
+			route = store.layer;
+			store.load();
+			
+			
+            route.style = estilo;
+			route.title= "Ruta";
+
+			map.addLayer(route);
+
+			store.onLoad = function(){
+
+                if (route.features.length == 0) {
+
+                 alert ( "Los puntos seleccionados estan demasiado lejos de las vias de comunicacion (Calles peatonal o carril bici)" );
+
+                } else {
+				
+				map.zoomToExtent(route.getDataExtent());
+				//alert(route.features[0].attributes.length);
+					
+				
+				}
+				
+					//Calculo de la distancia recorrida
+					var longitudrecorrida= 0;
+					
+                    for (var i = 0; i < route.features.length; i++) {
+						longitudrecorrida = longitudrecorrida + parseInt(route.features[i].attributes.length);
+                    } 
+
+					var mostraDist = document.getElementById('longitud');
+			
+			        mostraDist.innerHTML = (longitudrecorrida/1000).toFixed(2);
+			        document.getElementById('distancia').style.visibility = 'visible';
+				
+				
+				document.getElementById('wait').style.visibility = 'hidden'; //Quitamos el icono de espera
+			}		
+	   
+		   }	
+			
+			
+			
+			
+
+
+			
+   //funcion para devolver teselas en formato imagen de OSM.
+           function osm_getTileURL(bounds) {
+
+                var res = this.map.getResolution();
+
+                var x = Math.round((bounds.left - this.maxExtent.left) / (res * this.tileSize.w));
+
+                var y = Math.round((this.maxExtent.top - bounds.top) / (res * this.tileSize.h));
+
+                var z = this.map.getZoom();
+
+                var limit = Math.pow(2, z);
+
+
+
+                if (y < 0 || y >= limit) {
+
+                    return OpenLayers.Util.getImagesLocation() + "404.png";
+
+                } else {
+
+                    x = ((x % limit) + limit) % limit;
+
+                    return this.url + z + "/" + x + "/" + y + "." + this.type;
+
+                }
+
+            }
+			
+			
+			
+	//recibe los valores de los puntos de salida y llegada introducidos por el usuario	
+	function eligepuntos() {
+		
+		var lonstart = document.getElementById('xinicio').value;
+		var latstart = document.getElementById('yinicio').value;
+		var lonstop = document.getElementById('xfinal').value;
+		var latstop = document.getElementById('yfinal').value;
+		
+		            
+                    var lonLat = new OpenLayers.LonLat(lonstart, latstart);	                
+					var coords = lonLat.transform(new OpenLayers.Projection("EPSG:4326"), map.getProjectionObject());
+	
+		   //lo mismo pero con el punto de parada				
+					var lonLat2 = new OpenLayers.LonLat(lonstop,latstop);	                
+					var coords2 = lonLat2.transform(new OpenLayers.Projection("EPSG:4326"), map.getProjectionObject());
+		  
+		  var startPointx = coords.lon
+		  var startPointy = coords.lat
+		  var stopPointx = coords2.lon
+		  var stopPointy = coords2.lat
+		  
+		  asignacp2 (startPointx, startPointy, stopPointx, stopPointy);
+		
+        };
+
+
+//FUNCIONES PARA ESTABLECER LOS PUNTOS DE LA RUTA A PARTIR DE LOS CODIGO POSTALES INTRODUCIDOS POR EL USUARIO
+		
+	//recibe los valores de los codigos postales introducidos por el usuario, los manda al servidor de mapcentia y obtiene las coordenadas de los codigos postales
+	function eligecps()	{
+	
+	////map.baseLayer.redraw();
+	    map.setCenter(new OpenLayers.LonLat(map.getCenter()), 5);  //Se cambia rapidamente el zoom para que se actualizen los iconos de salida y llegada
+
+	    var cpinicio = document.getElementById('cpinicio').value;
+		var cpfinal = document.getElementById('cpfinal').value;
+	
+	
+			var cp = new geocloud.geoJsonStore({
+				db: "jagarga",
+				sql: "select x,y,the_geom AS wkt from codigos_postales where codigo= '" + cpinicio + "'",
+			});
+			
+			cp.load();
+			  			
+			cp.onLoad = function(){
+			
+			var cpx = cp.layer.features[0].attributes.x;
+			var cpy = cp.layer.features[0].attributes.y;
+
+				var startPointx = cpx;
+				var startPointy = cpy;
+
+			asignacp1 (startPointx, startPointy)
+			}
+		}
+	
+	//funcion suplemental a la funcion eligecps para fijar los puntos de ruta mediante codigos postales
+    function asignacp1(startPointx, startPointy) {	
+	
+			var cpfinal = document.getElementById('cpfinal').value;
+	
+	
+			var cp2 = new geocloud.geoJsonStore({
+				db: "jagarga",
+				sql: "select x,y,the_geom AS wkt from codigos_postales where codigo= '" + cpfinal + "'",
+			});
+			
+              //var codigo_postal = cp.layer;	
+			  //codigo_postal.style = start_style;			  
+			  //map.addLayer(codigo_postal);
+			  
+			cp2.load();
+			  			
+			cp2.onLoad = function(){
+			
+			var cpx = cp2.layer.features[0].attributes.x;
+			var cpy = cp2.layer.features[0].attributes.y;
+
+				var stopPointx = cpx;
+				var stopPointy = cpy;
+
+			asignacp2 (startPointx, startPointy, stopPointx, stopPointy)
+			}
+	
+	
+	}
+									   
+	
+	//funcion suplemental2 a la funcion eligecps para fijar los puntos de ruta mediante codigos postales
+	function asignacp2(startPointx, startPointy, stopPointx, stopPointy) {
+
+        //map.baseLayer.redraw();
+	    map.setCenter(new OpenLayers.LonLat(-458670, 5011357), 8);
+	
+	        //si ya se ha dibujado previamente algun feature, se borran.
+            if (start && stop) {
+
+                 start.removeFeatures(start.features);
+                 stop.removeFeatures(stop.features);
+		        }
+	   
+
+	
+		var lonstart = startPointx;
+		var latstart = startPointy;
+		var lonstop = stopPointx;
+		var latstop = stopPointy;
+
+		  
+		  	// Crear una feature punto
+          var puntostart = new OpenLayers.Geometry.Point(lonstart,latstart);
+          var featurestart= new OpenLayers.Feature.Vector(puntostart); 
+		
+	         // Añadir las features a la capa vectorial
+          //start.addFeatures(featurestart);
+		  start.features[0]=featurestart;
+		  
+		  
+		  var puntostop = new OpenLayers.Geometry.Point(lonstop,latstop);
+          var featurestop= new OpenLayers.Feature.Vector(puntostop); 
+		
+		// Añadir las features a la capa vectorial
+          //stop.addFeatures(featurestop);
+		  stop.features[0]=featurestop;
+	
+	            //dibuja los puntos en el mapa
+                new OpenLayers.Control.DrawFeature(start, SinglePoint);
+                new OpenLayers.Control.DrawFeature(stop, SinglePoint);
+				
+				
+//llamada al metodo	zoomtolayer, que le pasamos los dos puntos como parametros y nos hace zoom			
+zoomtolayer(puntostart, puntostop);
+
+//llamada al metodo popups, que nos representa dos comentarios sobre los puntos de inicio y final				
+popups(puntostart, puntostop);				 			  
+
+	
+	};
+		
+	
+	
+	//DEFINE UN MARCO CON LOS PUNTOS DE RUTA COMO EXTREMOS Y HACE ZOOM A ESTE
+	function zoomtolayer(puntostart, puntostop) {
+	
+				var bounds = new OpenLayers.Bounds();           //Marco que usaremos para hacer zoom a la capa
+				bounds.extend(puntostart);
+                bounds.extend(puntostop);
+                bounds.toBBOX();
+				map.zoomToExtent(bounds);
+				}
+				
+	
+	
+	
+	
+	//metodo popups, que nos representa dos comentarios sobre los puntos de inicio y final
+	function popups(puntostart, puntostop) {
+			
+
+	        //Este while borra todos los popups anteriores si existen	
+        while( map.popups.length ) {
+              map.removePopup(map.popups[0]);
+        }
+			
+         //crea dos popups y los asigna a cada punto			
+            var startpopup = new OpenLayers.Popup.FramedCloud(
+            start.id+"_popup", 
+            puntostart.getBounds().getCenterLonLat(),
+            new OpenLayers.Size(30, 30),
+            "START",
+            null, 
+            true, 
+            null);
+			
+			
+            var stopopup = new OpenLayers.Popup.FramedCloud(
+            stop.id+"_popup", 
+            puntostop.getBounds().getCenterLonLat(),
+            new OpenLayers.Size(30, 30),
+            "STOP",
+            null, 
+            true, 
+            null);
+            
+			map.addPopup(startpopup);
+            map.addPopup(stopopup);
+			
+			};
+			
+			
+			
+			
+//GEOCODER DE GOOGLE API V3. BUSCADOR DE DIRECCIONES.
+
+	        // Get adress value form <input2>
+	          function codeAddress2() {
+			         var geocoder = new google.maps.Geocoder();
+                     var address = document.getElementById('q-adress2').value;
+                     geocoder.geocode( { 'address': address}, function(results, status) {
+                     if (status == google.maps.GeocoderStatus.OK) {
+		  
+		  	         var coords = results[0].geometry.location;
+			         var lat = results[0].geometry.location.lat();
+                     var lng = results[0].geometry.location.lng();
+			
+	                 var ll = new OpenLayers.LonLat(lng,lat).transform(new OpenLayers.Projection("EPSG:4326"), map.getProjectionObject());
+			         
+			
+		                            var puntostop = new OpenLayers.Geometry.Point(ll.lon, ll.lat);
+                                    var featurestop= new OpenLayers.Feature.Vector(puntostop); 
+		
+		                             //map.baseLayer.redraw();
+									map.setCenter(new OpenLayers.LonLat(map.getCenter()), 5);  //Se cambia rapidamente el zoom para que se actualizen los iconos de salida y llegada
+	
+		                             //si ya se ha dibujado previamente algun feature, se borran.
+		                             if (stop) {
+                                     stop.removeFeatures(stop.features);
+		                                 }
+		
+	                                // Añadir las features a la capa vectorial
+                                    //start.addFeatures(featurestart);
+		                            stop.features[0]=featurestop;
+			
+
+		//Creamos el popup que se mostrara señalando si el punto es de salida o de llegada	
+		//Este while borra todos los popups anteriores si existen	
+        while( map.popups.length ) {
+              map.removePopup(map.popups[0]);
+        }
+						
+            var stopopup = new OpenLayers.Popup.FramedCloud(
+            stop.id+"_popup", 
+            puntostop.getBounds().getCenterLonLat(),
+            new OpenLayers.Size(30, 30),
+            "STOP",
+            null, 
+            true, 
+            null);
+            
+            map.addPopup(stopopup);
+									
+	
+						            map.setCenter (ll, 16);
+
+          } else {
+            alert('No funciona por la siguiente razon: ' + status);
+          }
+        });
+      }
+			
+			
+			
+	        // Get adress value form <input1>
+	          function codeAddress() {
+			         var geocoder = new google.maps.Geocoder();
+                     var address = document.getElementById('q-adress').value;
+                     geocoder.geocode( { 'address': address}, function(results, status) {
+                     if (status == google.maps.GeocoderStatus.OK) {
+		  
+		  	         var coords = results[0].geometry.location;
+			         var lat = results[0].geometry.location.lat();
+                     var lng = results[0].geometry.location.lng();
+			
+	                 var ll = new OpenLayers.LonLat(lng,lat).transform(new OpenLayers.Projection("EPSG:4326"), map.getProjectionObject());
+			         
+			
+		                            var puntostart = new OpenLayers.Geometry.Point(ll.lon, ll.lat);
+                                    var featurestart= new OpenLayers.Feature.Vector(puntostart); 
+		
+		                            //map.baseLayer.redraw();
+									map.setCenter(new OpenLayers.LonLat(map.getCenter()), 5);  //Se cambia rapidamente el zoom para que se actualizen los iconos de salida y llegada
+	
+		                             //si ya se ha dibujado previamente algun feature, se borran.
+		                             if (start) {
+                                     start.removeFeatures(start.features);
+		                                 }
+		
+	                                // Añadir las features a la capa vectorial
+                                    //start.addFeatures(featurestart);
+		                            start.features[0]=featurestart;
+									
+		//Creamos el popup que se mostrara señalando si el punto es de salida o de llegada
+		//Este while borra todos los popups anteriores si existen	
+		while( map.popups.length ) {
+              map.removePopup(map.popups[0]);
+        }
+			
+         //crea dos popups y los asigna a cada punto			
+            var startpopup = new OpenLayers.Popup.FramedCloud(
+            start.id+"_popup", 
+            puntostart.getBounds().getCenterLonLat(),
+            new OpenLayers.Size(30, 30),
+            "START",
+            null, 
+            true, 
+            null);
+			
+            
+			map.addPopup(startpopup);
+					
+						            map.setCenter (ll, 16);
+
+          } else {
+            alert('Geocode was not successful for the following reason: ' + status);
+          }
+        });
+      }
+	  
+	  
+	  
+	  
+	  
+	  	  //GEOLOCALIZACION DE NUESTRA POSICION
+	 
+	function geolocationClick() {
+	
+	    alert("Tenga en cuenta que el geoposicionamiento del ordenador por internet es mas preciso si usa WIFI que si esta conectado con cable a una red local.");  //Mensaje de alerta para avisar de que este método funciona mejor con wifi
+        geolocate.deactivate();
+        geolocate.activate();
+		
+    };	
+    
+    function locateMarker(event) {
+	
+	    var markers = new OpenLayers.Layer.Markers("Mi Posicion");
+        map.addLayer(markers);
+        // Remove any existing marker
+        //markers.clearMarkers();
+        
+        var size = new OpenLayers.Size(50, 50);
+        var offset = new OpenLayers.Pixel(-(size.w/2), -size.h);
+        var icon = new OpenLayers.Icon('imagenes/localizacion.png', size, offset);
+        icon.setOpacity(1);
+        
+        // Create a lonlat instance from the event location.
+        // NOTE: The coordinates are transformed to the map's projection by
+        // the geolocate control.
+        var lonlat = new OpenLayers.LonLat(event.point.x, event.point.y);
+        var lonlat2 =new OpenLayers.LonLat(event.point.x, event.point.y).transform(map.getProjectionObject(),new OpenLayers.Projection("EPSG:4326"));
+		
+		//centramos la vista y zoom en el punto
+		
+		map.setCenter (lonlat, 16);
+		
+		
+        // Add the marker
+        var popup = null;
+        var marker = new OpenLayers.Marker(lonlat, icon);
+        marker.events.on({
+            "mouseover": function() {
+                if(popup) {
+                    map.removePopup(popup);
+                }
+                
+				
+                var content = "<strong>Usted esta aquí:</strong> <br/> <br/> <strong>Longitud:</strong> " + (lonlat2.lon).toFixed(4) + "<br/>" +
+                    "<strong>Latitud:</strong> " + (lonlat2.lat).toFixed(4);
+            
+                popup = new OpenLayers.Popup.FramedCloud(
+                "popup", lonlat, new OpenLayers.Size(250, 100), content,
+                null, true, null);
+                
+                map.addPopup(popup);
+            }
+        });
+        
+        markers.addMarker(marker);
+		
+    }
+	
+	
+	
+	//FUNCION PARA MOSTRAR EL PUNTO TURISTICO SELECCIONADO
+	
+	function muestrapuntos(nomPunt, turis){
+	
+	    var turis = turis; //variable para saber si la funcion origen es la de pinchar sobre el mapa o la de seleccion de puntos
+		start.removeFeatures(start.features);
+		
+			var puntos_turisticos = new geocloud.geoJsonStore({
+				db: "jagarga",
+				sql: "select punto, latitud, longitud, descrip, descrip2, imagen from puntos_turi2 where identifica= '" + nomPunt + "'",
+			});
+			
+			puntos_turisticos.load();
+
+			puntos_turisticos.onLoad = function(){
+
+			     var lat = puntos_turisticos.layer.features[0].attributes.latitud;
+				 var lon = puntos_turisticos.layer.features[0].attributes.longitud;
+				 var nombre = puntos_turisticos.layer.features[0].attributes.punto;
+				 var descripcion = puntos_turisticos.layer.features[0].attributes.descrip;
+				 var descripcion2 = puntos_turisticos.layer.features[0].attributes.descrip2;
+				 var imagen = puntos_turisticos.layer.features[0].attributes.imagen;
+				 
+				 
+				 if (descripcion2 == null ) {
+				 
+				 descripcion = descripcion;
+				 //alert (descripcion);
+				 
+				 } else {
+				 
+				 descripcion= descripcion + " " + descripcion2;
+				 //alert (descripcion + " " + descripcion2);
+				 }
+				 
+				 
+				 devuelvepunto (lat, lon, nombre, descripcion, imagen, turis);
+				//map.zoomToExtent(route.getDataExtent());
+			}
+		
+		
+   }
+
+    function devuelvepunto(lat, lon, nompunt, descripcion, imagen, turis){
+
+		
+		//map.baseLayer.redraw();
+		map.setCenter(new OpenLayers.LonLat(map.getCenter()), 5);  //Se cambia rapidamente el zoom para que se actualizen los iconos de salida y llegada
+	
+		        //si ya se ha dibujado previamente algun feature, se borran.
+		        if (start) {
+                 start.removeFeatures(start.features);
+		        }
+
+                    var lonLat = new OpenLayers.LonLat(lon, lat);	                
+					var coords = lonLat.transform(new OpenLayers.Projection("EPSG:4326"), map.getProjectionObject());
+
+
+		  	// Crear una feature punto
+          var punto = new OpenLayers.Geometry.Point(coords.lon,coords.lat);
+          var feature= new OpenLayers.Feature.Vector(punto); 
+		
+		var turis = turis; //variable para aber si la funcion origen es la de pinchar sobre el mapa o la de seleccion de puntos
+		
+		if (turis == 1) {
+		
+		var nombre = nompunt;
+		popupsturis(punto, nombre, descripcion, imagen);
+		map.setCenter(lonLat, 18);
+			 
+		} else {
+		
+		  	         // Añadir las features a la capa vectorial
+			 
+			 start.features[0]=feature;
+			 var nombre = nompunt;
+			 
+			 popupsturis(punto, nombre, descripcion, imagen);
+			 
+             map.setCenter(lonLat, 18);   
+		
+		}
+		
+   }
+
+
+	function muestrapuntos2(nomPunt){   //funcion igual que la anterior pero para el punto turistico de destino
+	
+        stop.removeFeatures(stop.features);
+        
+			var puntos_turisticos = new geocloud.geoJsonStore({
+				db: "jagarga",
+				sql: "select punto, latitud, longitud, descrip, descrip2, imagen from puntos_turi2 where identifica= '" + nomPunt + "'",
+			});
+			
+			puntos_turisticos.load();
+
+			puntos_turisticos.onLoad = function(){
+
+			     var lat = puntos_turisticos.layer.features[0].attributes.latitud;
+				 var lon = puntos_turisticos.layer.features[0].attributes.longitud;
+				 var nombre = puntos_turisticos.layer.features[0].attributes.punto;
+				 var descripcion = puntos_turisticos.layer.features[0].attributes.descrip;
+				 var descripcion2 = puntos_turisticos.layer.features[0].attributes.descrip2;
+				 var imagen = puntos_turisticos.layer.features[0].attributes.imagen;
+				 
+				 if (descripcion2 == null ) {
+				 
+				 descripcion = descripcion;
+				 //alert (descripcion);
+				 
+				 } else {
+				 
+				 descripcion= descripcion + " " + descripcion2;
+				 //alert (descripcion + " " + descripcion2);
+				 }
+				 
+				 
+				 devuelvepunto2 (lat, lon, nombre, descripcion, imagen);
+				//map.zoomToExtent(route.getDataExtent());
+			}
+   }
+
+
+   
+   function devuelvepunto2(lat, lon, nompunt, descripcion, imagen){    //funcion igual que la anterior pero para el punto turistico de destino
+
+		
+		//map.baseLayer.redraw();
+		map.setCenter(new OpenLayers.LonLat(map.getCenter()), 5);  //Se cambia rapidamente el zoom para que se actualizen los iconos de salida y llegada
+	
+		        //si ya se ha dibujado previamente algun feature, se borran.
+		        if (stop) {
+                 stop.removeFeatures(stop.features);
+		        }
+
+                    var lonLat = new OpenLayers.LonLat(lon, lat);	                
+					var coords = lonLat.transform(new OpenLayers.Projection("EPSG:4326"), map.getProjectionObject());
+
+		  	// Crear una feature punto
+          var punto = new OpenLayers.Geometry.Point(coords.lon,coords.lat);
+          var feature= new OpenLayers.Feature.Vector(punto); 
+		
+	         // Añadir las features a la capa vectorial
+			 
+			 stop.features[0]=feature;
+			 var nombre = nompunt;
+			 
+			 popupsturis(punto, nombre, descripcion, imagen);
+			 			
+             map.setCenter(lonLat, 18);
+
+   }
+
+
+
+	//metodo popups, que nos representa el nombre del punto turistico seleccionado
+	function popupsturis(puntoturis, nombre, descripcion, imagen) {
+			
+	        //Este while borra todos los popups anteriores si existen	
+        while( map.popups.length>1 ) {
+              map.removePopup(map.popups[0]);
+        }
+			
+         //crea dos popups y los asigna a cada punto			
+            var turispopup = new OpenLayers.Popup.FramedCloud(
+            start.id+"_popup", 
+            puntoturis.getBounds().getCenterLonLat(),
+            new OpenLayers.Size(30, 30),
+            nombre.bold() + "<br />" + descripcion + "<br /> <br />" + "<div align='center'> <IMG id= 'turismo' img border='2' src='imagenes/turismo/" + imagen + "' > </div>" ,
+            null, 
+            true, 
+            null);
+            
+			turispopup.maxSize = new OpenLayers.Size(500,400);
+			map.addPopup(turispopup);
+			
+			};
+	
+	
+	//Parte para obtener los layers de un WMS y cargar las capas que se deseen
+	
+	function wmswindow() {    // En esta funcionabrimos una ventana nueva en la cual procedemos a obtener las parametros wms a cargar que son devuetos a la ventana principal
+	
+   
+	   var datos = window.showModalDialog("WMS2.html","","dialogwidth: 500; dialogheight: 270; resizable: yes; center: off");
+	   
+	   //Añadimos el WMS devuelto como capa base
+	   
+	   		wms = new OpenLayers.Layer.WMS( "OpenLayers WMS",
+                    datos.url + "?", {layers: datos.layers, transparent: datos.transparencia},
+					{ isBaseLayer: false,} );
+		    
+            
+			map.addLayer(wms);
+			map.setLayerIndex(wms, 0);
+			
+  
+    }
+   
+   
+   //Parte para obtener el pronostico del tiempo de un servidor
+   
+   function eltiempowindow() { 
+   
+   var bounds = map.getExtent();
+   var coords = bounds.getCenterLonLat();
+   coords.transform(new OpenLayers.Projection("EPSG:900913"), new OpenLayers.Projection("EPSG:4326"))
+
+   var lon = coords.lon;
+   var lat = coords.lat;
+   //alert (lon + " " + lat);
+   
+   //window.showModalDialog("eltiempo.html?lat=39.474&lon=-0.376","","dialogwidth: 500; dialogheight: 300; resizable: yes; center: off");
+   window.showModalDialog("eltiempo.html?lat=" + lat + "&lon=" + lon ,"","dialogwidth: 700; dialogheight: 600; resizable: no; center: on");
+   
+   }
+   
+   
+   //FUNCION PARA HACER ZOOM A LA PROVINCIA DE VALENCIA MEDIANTE EL BOTON DEL PANEL
+   function zoomvlc () {
+   
+                // Zoom a la provincia de valencia
+				map.setCenter(new OpenLayers.LonLat(-42000, 4789000), 13);	
+
+		
+   }  
+   
+   
+   //FUNCION PARA CAMBIAR EL ICCONO DEL CALCULO DE RUTA
+   function seleccionicono(value) {
+   
+   		    if ( value == "coche" ) {
+		
+		    document.getElementById('imagencoche').style.visibility = 'visible';
+            document.getElementById('imagenapie').style.visibility = 'hidden';
+			document.getElementById('imagenbici').style.visibility = 'hidden';
+		
+		    } 
+
+		    if ( value == "bici" ) {
+		
+		    document.getElementById('imagencoche').style.visibility = 'hidden';
+            document.getElementById('imagenapie').style.visibility = 'hidden';
+			document.getElementById('imagenbici').style.visibility = 'visible';
+		
+		    } 
+			
+			if ( value == "pie" ) {
+			
+			document.getElementById('imagencoche').style.visibility = 'hidden';
+			document.getElementById('imagenapie').style.visibility = 'visible';
+			document.getElementById('imagenbici').style.visibility = 'hidden';
+			
+			}
+   }
+
+		
+    //FUNCION QUE ABRE UNA VENTANA CON LA INFORMACION SOBRE EL VISOR Y SUS AUTORES
+   function acercade() {
+   
+    window.showModalDialog("acercade.html","","dialogwidth: 700; dialogheight: 600; resizable: no; center: on");
+   
+   }
+
+
+	
+	/*
+	//FUNCION PARA REDONDEAR A DOS DECIMALES
+	function redondea (mi_numero){
+	
+				var mi_numero= mi_numero;
+				mi_numero=mi_numero*100;
+                mi_numero=Math.floor(mi_numero);
+                mi_numero=mi_numero/100;
+				
+				return mi_numero
+	} */
+
+	
+//http://gis.stackexchange.com/questions/17031/openlayers-format-kml-write-style
+//http://stackoverflow.com/questions/11990692/openlayers-export-to-kml-and-keep-my-map-styles
+		
+        </script>
+  </head>
+  <body onLoad="init()">
+  
+    <div id="panel"></div>
+        <div id="map"></div>
+		
+
+
+
+  </body>
+</html>
